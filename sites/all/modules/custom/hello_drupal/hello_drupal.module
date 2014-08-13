@@ -1,0 +1,42 @@
+<?php
+function hello_drupal_expage (){
+  //  return print_r (phpinfo());
+        return 'Hello Drupal1111 !';
+}
+
+function hello_drupal_menu(){
+   $items['Hello']=array(
+                  'title' => 'Hello Dru!',
+                  'description' => 'First page',
+                  'page callback'=>'hello_drupal_expage',
+                  'access callback' => 'user_access',
+                  'access arguments' => array('access content'),
+                  'type' => MENU_NORMAL_ITEM
+                  );
+    return $items;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?>

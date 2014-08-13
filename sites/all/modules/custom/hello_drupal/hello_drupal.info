@@ -1,0 +1,4 @@
+name = Hello Drupal
+description = "Module hello drupal"
+core = 7.x
+files[] = hello_drupal.module

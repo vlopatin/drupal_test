@@ -1,0 +1,4 @@
+name = Send mail form
+description = "Module send mail"
+core = 7.x
+files[] = send_mail.module

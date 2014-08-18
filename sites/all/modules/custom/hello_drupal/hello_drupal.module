@@ -1,23 +1,18 @@
 <?php
 function hello_drupal_expage() {
-  //  return print_r (phpinfo());
+//  return print_r (phpinfo());
   return 'Hello Drul1111 !';
 }
 
 function hello_drupal_menu() {
-  $items['hello/dru'] = array(
+  $items['hello_dru'] = array(
     'title' => 'Hello Dru!',
     'description' => 'First page',
     'page callback' => 'hello_drupal_expage',
-    'access callback' => 'hello_drupal_access',
-    'access arguments' => array(1, 'access administration menu'),
+    'access callback' => TRUE,
+//    'access arguments' => array(1, 'access administration menu'),
     'type' => MENU_CALLBACK
   );
   return $items;
 }
-
-function hello_drupal_access($arg1, $arg2) {
-    return TRUE;
-}
-
 

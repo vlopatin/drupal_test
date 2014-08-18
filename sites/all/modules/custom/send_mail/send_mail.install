@@ -1,53 +1,28 @@
 <?php
 
-/**
- * Implements hook_schema().
- */
 function send_mail_schema() {
   $schema['send_mail_table'] = array(
     'description' => 'Custom table from send_mail module.',
     'fields' => array(
-      'id' => array(
-        'description' => 'The primary identifier for a record.',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'greeting' => array(
-        'description' => 'Text Field.',
-        'type' => 'varchar',
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'name' => array(
-        'description' => 'Text Field.',
-        'type' => 'varchar',
-        'length' => 20,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'email' => array(
-        'description' => 'Text Field.',
-        'type' => 'varchar',
-        'length' => 20,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'subject' => array(
-        'description' => 'Text Field.',
-        'type' => 'varchar',
-        'length' => 20,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-
-      'body' => array(
-        'description' => 'Text field.',
-        'type' => 'text',
-        'not null' => FALSE,
-      ),
+             'id' => array('description' => 'The primary identifier for a record.', 'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+       'greeting' => array('description' => 'Greeting.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
+           'name' => array('description' => 'Name.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
+          'email' => array('description' => 'Email to.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
+        'subject' => array('description' => 'Subject of message.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
+           'body' => array('description' => 'Body of message.', 'type' => 'text', 'size' => 'medium', 'not null' => TRUE),
+         'uid' => array('description' => 'User Id.', 'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
+     'sended_at' => array('description' => 'The sending date timestamp.', 'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE),
     ),
     'primary key' => array('id'),
   );
   return $schema;
+}
+
+
+//function send_mail_install() {
+//    drupal_install_schema('send_mail');
+//}
+
+function send_mail_uninstall() {
+    drupal_uninstall_schema('send_mail');
 }

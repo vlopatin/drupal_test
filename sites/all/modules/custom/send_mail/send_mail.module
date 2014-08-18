@@ -163,12 +163,12 @@ function send_mail_form_validate($form, &$form_state) {
   $mail = $form_state['values']['email'];
   if (!valid_email_address($mail)) {
     //print($form_state['values']['body']['value']);
-    global $user;
-    $uuid = $user->uid;
+//    global $user;
+//    $uuid = $user->uid;
     //print($user->uid);
     //print($uuid);
-var_dump($form['greeting']['#options'][$form_state['values']['greeting']]);
-    var_dump($form_state['values']['greeting']);
+//	print($form_state['greeting']['#options'][$form_state['values']['greeting']]);
+//	var_dump($form_state['values']['greeting']);
     // exit;
 
     form_set_error('email', t('The email address appears to be invalid.'));
@@ -179,19 +179,24 @@ function send_mail_form_submit($form, &$form_state) {
   global $user;
   $uid = $user->uid;
 
+//$x = $form_state['values']['greeting'];
+//var_dump($form['to']['greeting']['#options'][$x]);
+
   db_insert('send_mail_table')
     ->fields(array('id', 'greeting', 'name', 'email', 'subject', 'body', 'uid', 'sended_at'))
-    ->values(array(
-      'id' => NULL,
-      'greeting' => $form['greeting']['#options'][$form_state['values']['greeting']],
-      'name' => $form_state['values']['name'],
-      'email' => $form_state['values']['email'],
-      'subject' => $form_state['values']['subject'],
-      'body' => $form_state['values']['body']['value'],
-      'uid' => $uid,
-      'sended_at' => REQUEST_TIME
-    ))
-    ->execute();
+   ->values(array(
+    'id' => NULL,
+     'greeting' => $form['to']['greeting']['#options'][$form_state['values']['greeting']],
+//	'greeting' => $form_state['greeting']['#options'][$form_state['values']['greeting']],
+
+    'name' => $form_state['values']['name'],
+   'email' => $form_state['values']['email'],
+    'subject' => $form_state['values']['subject'],
+   'body' => $form_state['values']['body']['value'],
+    'uid' => $uid,
+     'sended_at' => REQUEST_TIME
+   ))
+   ->execute();
 
 
 //  'id' => array('description' => 'The primary identifier for a record.', 'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),

@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function send_mail_schema() {
+  $schema['send_mail_table'] = array(
+    'description' => 'Custom table from send_mail module.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a record.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'greeting' => array(
+        'description' => 'Text Field.',
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'name' => array(
+        'description' => 'Text Field.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'email' => array(
+        'description' => 'Text Field.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'subject' => array(
+        'description' => 'Text Field.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+
+      'body' => array(
+        'description' => 'Text field.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+  return $schema;
+}

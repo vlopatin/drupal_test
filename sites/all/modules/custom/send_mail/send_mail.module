@@ -94,18 +94,30 @@
 function send_mail_menu() {
   $items = array();
   $items['send_mail_page'] = array(
-    'title' => 'Send mail',
+    'title' => 'Send mail page',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('send_mail_form'),
     'access arguments' => array('post comments'),
-//Post comments 
-//	'access arguments' => array('access administration menu'),
-//access administration menu
-//	'access callback' => 'access content',
-//	access content
-//    'access callback' => TRUE,
   );
+  $items['send_mail_admin_page'] = array(
+    'title' => 'Send mail admin page',
+    'page callback' => 'send_mail_admin',
+    'page arguments' => array(''),
+    'access arguments' => array('access administration menu'),
+  );
+
   return $items;
+}
+
+function send_mail_admin() {
+  
+
+
+
+
+
+
+  return 'Admin page';
 }
 
 function send_mail_form() {

@@ -97,7 +97,7 @@ function send_mail_menu() {
     'title' => 'Send mail',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('send_mail_form'),
-	'access arguments' => array('post comments'),
+    'access arguments' => array('post comments'),
 //Post comments 
 //	'access arguments' => array('access administration menu'),
 //access administration menu
@@ -166,64 +166,66 @@ function send_mail_form() {
 
 // Validate function for send_mail_form
 function send_mail_form_validate($form, &$form_state) {
+
   $mail = $form_state['values']['email'];
   if (!valid_email_address($mail)) {
-    //print($form_state['values']['body']['value']);
-//    global $user;
-//    $uuid = $user->uid;
-    //print($user->uid);
-    //print($uuid);
-//	print($form_state['greeting']['#options'][$form_state['values']['greeting']]);
-//	var_dump($form_state['values']['greeting']);
-    // exit;
 
     form_set_error('email', t('The email address appears to be invalid.'));
   }
 }
 
 function send_mail_form_submit($form, &$form_state) {
+
   global $user;
   $uid = $user->uid;
+  $to = $form_state['values']['email'];
 
-//$x = $form_state['values']['greeting'];
-//var_dump($form['to']['greeting']['#options'][$x]);
+  $params = array(
+    'subject' => $form_state['values']['subject'],
+    'body' => $form_state['values']['body']['value'],
+    'greeting' => $form['to']['greeting']['#options'][$form_state['values']['greeting']],
+    'name' => $form_state['values']['name']
+  );
+
+  $values = $form_state['values'];
+  $to = $values['email'];
+  $values['greeting'] = $form['to']['greeting']['#options'][$form_state['values']['greeting']];
+//  drupal_mail($module, $key, $to, $language, $params = array(), $from = NULL, $send = TRUE)
+  drupal_mail('send_mail', 'page_mail', $to, language_default(), $values);
 
   db_insert('send_mail_table')
     ->fields(array('id', 'greeting', 'name', 'email', 'subject', 'body', 'uid', 'sended_at'))
-   ->values(array(
-    'id' => NULL,
-     'greeting' => $form['to']['greeting']['#options'][$form_state['values']['greeting']],
-//	'greeting' => $form_state['greeting']['#options'][$form_state['values']['greeting']],
+    ->values(array(
+      'id' => NULL,
+      'greeting' => $values['greeting'],
+      'name' => $values['name'],
+      'email' => $values['email'],
+      'subject' => $values['subject'],
+      'body' => $values['body']['value'],
+      'uid' => $uid,
+      'sended_at' => REQUEST_TIME
+    ))
+    ->execute();
 
-    'name' => $form_state['values']['name'],
-   'email' => $form_state['values']['email'],
-    'subject' => $form_state['values']['subject'],
-   'body' => $form_state['values']['body']['value'],
-    'uid' => $uid,
-     'sended_at' => REQUEST_TIME
-   ))
-   ->execute();
+  drupal_set_message(t('Success: the message was recorded in the database'), 'status');
 
-	drupal_set_message(t('Success: the message was recorded in the database'), 'status');
+}
 
-//  'id' => array('description' => 'The primary identifier for a record.', 'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
-//       'greeting' => array('description' => 'Text Field.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
-//           'name' => array('description' => 'Text Field.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
-//          'email' => array('description' => 'Text Field.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
-//        'subject' => array('description' => 'Text Field.', 'type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => ''),
-//           'body' => array('description' => 'Text field.', 'type' => 'text', 'not null' => TRUE),
+function send_mail_mail($key, &$message, $params) {
 
+  $language = $message['language'];
 
-//  $num1 = $form_state['values']['number1'];
-//  $num2 = $form_state['values']['number2'];
-//  switch ($form_state['values']['operator']) {
-//    case 0:
-//      $result = $num1 + $num2;
-//      break;
-//
-//    default:
-//      $result = $num1 - $num2;
-//      break;
-//  }
-//  drupal_set_message(t('Result is @num', array('@num' => $result)));
+  $variables = array(
+    '!site-name' => variable_get('site_name', 'Drupal'),
+    '!subject' => $params['subject'],
+    '!greeting' => 'Hello, ' . $params['greeting'] . ' ' . $params['name'] . '! ',
+    '!body' => $params['body']['value'],
+  );
+  switch ($key) {
+    case 'page_mail':
+      $message['subject'] .= t($variables['!subject'], array('langcode' => $language->language));
+      $message['body'][] .= t($variables['!greeting'], array('langcode' => $language->language));
+      $message['body'][] .= t($variables['!body'], array('langcode' => $language->language));
+      break;
+  }
 }

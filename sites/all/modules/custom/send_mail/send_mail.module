@@ -219,7 +219,7 @@ function send_mail_form_submit($form, &$form_state) {
     ))
     ->execute();
 
-  drupal_set_message(t('Success: the message was recorded in the database'), 'status');
+  drupal_set_message(t('Success: the message was sent.'), 'status');
 
 }
 
@@ -228,7 +228,7 @@ function send_mail_mail($key, &$message, $params) {
   $language = $message['language'];
 
   $variables = array(
-    '!site-name' => variable_get('site_name', 'Drupal'),
+  //'!site-name' => variable_get('site_name', 'Drupal'),
     '!subject' => $params['subject'],
     '!greeting' => 'Hello, ' . $params['greeting'] . ' ' . $params['name'] . '! ',
     '!body' => $params['body']['value'],

@@ -4,13 +4,13 @@
 
 function send_mail_menu() {
   $items = array();
-  $items['send_mail_page'] = array(
+  $items['send_mail/form'] = array(
     'title' => 'Send mail page',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('send_mail_form'),
     'access arguments' => array('post comments'),
   );
-  $items['send_mail_admin_page'] = array(
+  $items['send_mail/admin'] = array(
     'title' => 'Send mail admin page',
     'page callback' => 'send_mail_admin',
     'page arguments' => array(''),
@@ -34,9 +34,38 @@ function send_mail_admin() {
       'sended_at' => REQUEST_TIME
     ))
     ->execute();*/
-$result = db_select('send_mail_table', 's')
+
+//global $user;
+//$uid = $user->uid;
+//$user_name = $user->name;
+
+$header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
+$rows = array();
+
+$query = db_select('send_mail_table', 's')
   ->fields('s')
   ->execute();
+
+while ($value = $query->fetchAssoc()) {
+
+$user=user_load($value['uid']);
+$username=$user->name;
+
+$rows[] = array(
+	$value['id'],
+	$value['email'],
+	$value['subject'],
+	$username,
+//	db_result(db_query("SELECT name FROM {users} WHERE uid = %d", $value['uid'])),
+//	$value['uid'],
+	format_date($value['sended_at'], 'long')
+	);
+}
+
+return theme('table', array('header' => $header, 'rows' => $rows));
+
+
+
 
 //  foreach ($result as $row) {
 //    var_dump($row);
@@ -52,11 +81,11 @@ $result = db_select('send_mail_table', 's')
 
   //var_dump($result);
   //if ($result) {
-$row = $result->fetchAssoc();
+//$row = $result->fetchAssoc();
 
 
 
-  return theme('admin_page_template', array('title' => $row['email'], 'body' => '2131313123Some body'));
+//  return theme('admin_page_template', array('title' => $row['email'], 'body' => '2131313123Some body'));
 }
 
 function send_mail_theme() {
@@ -127,7 +156,7 @@ function send_mail_form() {
 
 
   $form['message']['body'] = array(
-    '#type' => 'text_format',
+    '#type' => 'textarea',
     '#title' => t('Body'),
     '#size' => 200,
     '#required' => TRUE,
@@ -198,7 +227,7 @@ function send_mail_mail($key, &$message, $params) {
   $language = $message['language'];
 
   $variables = array(
-  //'!site-name' => variable_get('site_name', 'Drupal'),
+'!site-name' => variable_get('site_name', 'Drupal'),
     '!subject' => $params['subject'],
     '!greeting' => 'Hello, ' . $params['greeting'] . ' ' . $params['name'] . '! ',
     '!body' => $params['body'],

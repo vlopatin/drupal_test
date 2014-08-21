@@ -21,29 +21,29 @@ function send_mail_menu() {
 
 function send_mail_admin() {
 
-$header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
-$rows = array();
+  $header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
+  $rows = array();
 
-$query = db_select('send_mail_table', 's')
-  ->fields('s')
-  ->execute();
+  $query = db_select('send_mail_table', 's')
+    ->fields('s')
+    ->execute();
 
-while ($value = $query->fetchAssoc()) {
+  while ($value = $query->fetchAssoc()) {
 
-$user=user_load($value['uid']);
-$username=$user->name;
+    $user = user_load($value['uid']);
+    $username = $user->name;
 
-$rows[] = array(
-	$value['id'],
-	$value['email'],
-	$value['subject'],
-	$username,
-	$value['uid'],
-	format_date($value['sended_at'], 'long')
-	);
-}
+    $rows[] = array(
+      $value['id'],
+      $value['email'],
+      $value['subject'],
+      $username,
+      //$value['uid'],
+      format_date($value['sended_at'], 'long')
+    );
+  }
 
-return theme('table', array('header' => $header, 'rows' => $rows));
+  return theme('table', array('header' => $header, 'rows' => $rows));
 
 }
 
@@ -145,7 +145,7 @@ function send_mail_form_submit($form, &$form_state) {
   $user_name = $user->name;
   $values = $form_state['values'];
   $values['greeting'] = $form['to']['greeting']['#options'][$form_state['values']['greeting']];
- // $values['body'] = $values['body']['value'];
+  // $values['body'] = $values['body']['value'];
 
   $to = $values['email'];
 
@@ -161,23 +161,28 @@ function send_mail_form_submit($form, &$form_state) {
 
 
 //  drupal_mail($module, $key, $to, $language, $params = array(), $from = NULL, $send = TRUE)
-  drupal_mail('send_mail', 'page_mail', $to, language_default(), $params);
+  if (drupal_mail('send_mail', 'page_mail', $to, language_default(), $params)) {
 
-  db_insert('send_mail_table')
-    ->fields(array('id', 'greeting', 'name', 'email', 'subject', 'body', 'uid', 'sended_at'))
-    ->values(array(
-      'id' => NULL,
-      'greeting' => $values['greeting'],
-      'name' => $values['name'],
-      'email' => $values['email'],
-      'subject' => $values['subject'],
-      'body' => $values['body'],
-      'uid' => $uid,
-      'sended_at' => REQUEST_TIME
-    ))
-    ->execute();
+    $query = db_insert('send_mail_table')
+      ->fields(array('id', 'greeting', 'name', 'email', 'subject', 'body', 'uid', 'sended_at'))
+      ->values(array(
+        'id' => NULL,
+        'greeting' => $values['greeting'],
+        'name' => $values['name'],
+        'email' => $values['email'],
+        'subject' => $values['subject'],
+        'body' => $values['body'],
+        'uid' => $uid,
+        'sended_at' => REQUEST_TIME
+      ))
+      ->execute();
+    if ($query > 0) {
+      drupal_set_message(t('Success: the message was sent and record to the base.'), 'status');
+    } else {
+      drupal_set_message(t('Success: the message was sent, but was not record to the base.'), 'status');
+    }
 
-  drupal_set_message(t('Success: the message was sent.'), 'status');
+  } else drupal_set_message(t('Fail: the message was not sent.'), 'status');
 
 }
 
@@ -186,7 +191,7 @@ function send_mail_mail($key, &$message, $params) {
   $language = $message['language'];
 
   $variables = array(
-'!site-name' => variable_get('site_name', 'Drupal'),
+    '!site-name' => variable_get('site_name', 'Drupal'),
     '!subject' => $params['subject'],
     '!greeting' => 'Hello, ' . $params['greeting'] . ' ' . $params['name'] . '! ',
     '!body' => $params['body'],

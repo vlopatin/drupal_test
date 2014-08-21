@@ -78,6 +78,9 @@
  * @see template_process()
  */
 ?>
+
+Это шаблон из файл в папке темпелейты темы: <?php echo basename(__FILE__); ?><br>
+
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
 
   <?php print render($title_prefix); ?>

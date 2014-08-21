@@ -21,24 +21,6 @@ function send_mail_menu() {
 
 function send_mail_admin() {
 
-  /*db_insert('send_mail_table')
-    ->fields(array('id', 'greeting', 'name', 'email', 'subject', 'body', 'uid', 'sended_at'))
-    ->values(array(
-      'id' => NULL,
-      'greeting' => $values['greeting'],
-      'name' => $values['name'],
-      'email' => $values['email'],
-      'subject' => $values['subject'],
-      'body' => $values['body'],
-      'uid' => $uid,
-      'sended_at' => REQUEST_TIME
-    ))
-    ->execute();*/
-
-//global $user;
-//$uid = $user->uid;
-//$user_name = $user->name;
-
 $header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
 $rows = array();
 
@@ -56,36 +38,13 @@ $rows[] = array(
 	$value['email'],
 	$value['subject'],
 	$username,
-//	db_result(db_query("SELECT name FROM {users} WHERE uid = %d", $value['uid'])),
-//	$value['uid'],
+	$value['uid'],
 	format_date($value['sended_at'], 'long')
 	);
 }
 
 return theme('table', array('header' => $header, 'rows' => $rows));
 
-
-
-
-//  foreach ($result as $row) {
-//    var_dump($row);
-//  }
-
-//  ->fetchAssoc();
-  //$result = db_query("SELECT * FROM {send_mail_table}");
-
-
-  //$row = $result->fetchAssoc();
-
-  // echo $row['email'];
-
-  //var_dump($result);
-  //if ($result) {
-//$row = $result->fetchAssoc();
-
-
-
-//  return theme('admin_page_template', array('title' => $row['email'], 'body' => '2131313123Some body'));
 }
 
 function send_mail_theme() {
@@ -186,7 +145,7 @@ function send_mail_form_submit($form, &$form_state) {
   $user_name = $user->name;
   $values = $form_state['values'];
   $values['greeting'] = $form['to']['greeting']['#options'][$form_state['values']['greeting']];
-  $values['body'] = $values['body']['value'];
+ // $values['body'] = $values['body']['value'];
 
   $to = $values['email'];
 

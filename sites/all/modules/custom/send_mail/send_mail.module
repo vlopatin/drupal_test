@@ -26,49 +26,183 @@ function send_mail_admin() {
 
   $query = db_select('send_mail_table', 's')
     ->fields('s')
+    //->limit('3')
     ->execute();
 
   while ($value = $query->fetchAssoc()) {
-
     $user = user_load($value['uid']);
     $username = $user->name;
-
     $rows[] = array(
       $value['id'],
       $value['email'],
       $value['subject'],
       $username,
-      //$value['uid'],
       format_date($value['sended_at'], 'long')
     );
   }
 
-  return theme('table', array('header' => $header, 'rows' => $rows));
+  return theme('send_mail_table', array('header' => $header, 'rows' => $rows, 'caption' => 'Send mail log'));
 
 }
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
+function _theme_send_mail_table($variables) {
+  $header = $variables['header'];
+  $rows = $variables['rows'];
+//  $attributes = $variables['attributes'];
+  $caption = $variables['caption'];
+//  $colgroups = $variables['colgroups'];
+  // $sticky = $variables['sticky'];
+  // $empty = $variables['empty'];
+
+  // Add sticky headers, if applicable.
+//  if (count($header) && $sticky) {
+//    drupal_add_js('misc/tableheader.js');
+//    // Add 'sticky-enabled' class to the table to identify it for JS.
+//    // This is needed to target tables constructed by this function.
+//    $attributes['class'][] = 'sticky-enabled';
+//  }
+
+//  $output = '<table' . drupal_attributes($attributes) . ">\n";
+  $output = '<table' . ">\n";
+
+  if (isset($caption)) {
+    $output .= '<caption>' . $caption . "</caption>\n";
+  }
+
+  // Add the 'empty' row message if available.
+  if (!count($rows)) {
+    $header_count = 0;
+    foreach ($header as $header_cell) {
+      if (is_array($header_cell)) {
+        $header_count += isset($header_cell['colspan']) ? $header_cell['colspan'] : 1;
+      } else {
+        $header_count++;
+      }
+    }
+    $rows[] = array(array('data' => '', 'colspan' => $header_count, 'class' => array('empty', 'message')));
+  }
+
+  // Format the table header:
+  if (count($header)) {
+    $ts = tablesort_init($header);
+    // HTML requires that the thead tag has tr tags in it followed by tbody
+    // tags. Using ternary operator to check and see if we have any rows.
+    $output .= (count($rows) ? ' <thead><tr>' : ' <tr>');
+    foreach ($header as $cell) {
+      $cell = tablesort_header($cell, $header, $ts);
+      $output .= _theme_table_cell($cell, TRUE);
+    }
+    // Using ternary operator to close the tags based on whether or not there are rows
+    $output .= (count($rows) ? " </tr></thead>\n" : "</tr>\n");
+  } else {
+    $ts = array();
+  }
+
+  // Format the table rows:
+  if (count($rows)) {
+    $output .= "<tbody>\n";
+    $flip = array('even' => 'odd', 'odd' => 'even');
+    $class = 'even';
+    foreach ($rows as $number => $row) {
+      // Check if we're dealing with a simple or complex row
+      if (isset($row['data'])) {
+        $cells = $row['data'];
+        $no_striping = isset($row['no_striping']) ? $row['no_striping'] : FALSE;
+
+        // Set the attributes array and exclude 'data' and 'no_striping'.
+        $attributes = $row;
+        unset($attributes['data']);
+        unset($attributes['no_striping']);
+      } else {
+        $cells = $row;
+        $attributes = array();
+        $no_striping = FALSE;
+      }
+      if (count($cells)) {
+        // Add odd/even class
+        if (!$no_striping) {
+          $class = $flip[$class];
+          $attributes['class'][] = $class;
+        }
+
+        // Build row
+        $output .= ' <tr' . drupal_attributes($attributes) . '>';
+        $i = 0;
+        foreach ($cells as $cell) {
+          $cell = table_sort_cell($cell, $header, $ts, $i++);
+          $output .= _theme_mytable_cell($cell);
+        }
+        $output .= " </tr>\n";
+      }
+    }
+    $output .= "</tbody>\n";
+  }
+
+  $output .= "</table>\n";
+  return $output;
+}
+
+function table_sort_cell($cell, $header, $ts, $i) {
+  if (isset($header[$i]['data']) && $header[$i]['data'] == $ts['name'] && !empty($header[$i]['field'])) {
+    if (is_array($cell)) {
+      $cell['class'][] = 'active';
+    } else {
+      $cell = array('data' => $cell, 'class' => array('active'));
+    }
+  }
+  return $cell;
+}
+
+function _theme_mytable_cell($cell, $header = FALSE) {
+  $attributes = '';
+
+  if (is_array($cell)) {
+    $data = isset($cell['data']) ? $cell['data'] : '';
+    // Cell's data property can be a string or a renderable array.
+    if (is_array($data)) {
+      $data = drupal_render($data);
+    }
+    $header |= isset($cell['header']);
+    unset($cell['data']);
+    unset($cell['header']);
+    //  $attributes = drupal_attributes($cell);
+  } else {
+    $data = $cell;
+  }
+
+  if ($header) {
+    $output = "<th>$data</th>";
+  } else {
+    $output = "<td>$data</td>";
+  }
+
+  return $output;
+}
+
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
 
 function send_mail_theme() {
   return array(
-    'admin_page_template' => array(
+    'send_mail_table' => array(
       'variables' => array(
-        'body' => NULL,
-        'title' => NULL,
+        'header' => NULL,
+        'rows' => NULL,
+        'caption' => NULL,
       ),
-    ),
+      'template' => 'send_mail_table',
+
+      ),
   );
 }
 
+function template_preprocess_send_mail_table(&$variables, $hook) {
 
-function theme_admin_page_template($variables) {
-  $output = '<div class="custom-template-wrapper">';
-  $output .= '<div class="title">';
-  $output .= $variables['title'];
-  $output .= '</div>';
-  $output .= '<div class="body">';
-  $output .= $variables['body'];
-  $output .= '</div>';
-  $output .= '</div>';
-  return $output;
+
+  $variables['header'][0] = 'QWQ';
+
+
 }
 
 

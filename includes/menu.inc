@@ -1532,7 +1532,7 @@ function _menu_tree_check_access(&$tree) {
  *   A flat array of menu links that are part of the menu. Each array element
  *   is an associative array of information about the menu link, containing the
  *   fields from the {menu_links} table, and optionally additional information
- *   from the {menu_router} table, if the menu item appears in both tables.
+ *   from the {menu_router} table, if the menu item appears in both , 'sticky' => TRUEs.
  *   This array must be ordered depth-first. See _menu_build_tree() for a sample
  *   query.
  * @param $parents

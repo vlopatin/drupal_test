@@ -225,8 +225,15 @@ function send_mail_theme() {
         'caption' => NULL,
       ),
       'template' => 'send_mail_table',
-      //'template' => 'send_mail_row'
+    ),
 
+    'send_mail_row' => array(
+      'variables' => array(
+        'header' => NULL,
+        'rows' => NULL,
+        'caption' => NULL,
+      ),
+      'template' => 'send_mail_row',
     ),
   );
   // 'row'
@@ -241,32 +248,47 @@ function template_preprocess_send_mail_table(&$variables, $hook) {
 
 //  $rows[] = array($row->id, $row->email, $row->subject, $username, format_date($row->sended_at, 'long'),
 
-  $output = '';
+//  -----------------------------------------------TABLE
+//  $output = '';
+//
+//    $output .= '<tr>';
+//  foreach ($variables['header'] as $cell) {
+//    $output .= '<td>';
+//    $output .= $cell;
+//    $output .= '</td>';
+//  }
+//    $output .= '</tr>';
+//
+//  $variables['header'] = $output;
+//
+//  $output = '';
+//
+//  foreach ($variables['rows'] as $row) {
+//
+//    $output .= '<tr>';
+//
+//    foreach ($row as $cell) {
+//      $output .= '<td>';
+//      $output .= $cell;
+//      $output .= '</td>';
+//    }
+//
+//    $output .= '</tr>';
+//
+//  }
+//  $variables['rows'] = $output;
+//  ----------------------------------------------- /  TABLE
 
-  foreach ($variables['header'] as $cell) {
-    $output .= '<td>';
-    $output .= $cell;
-    $output .= '</td>';
-  }
 
-  $variables['header'] = $output;
+$variables['content'] = theme('send_mail_row', $variables);
 
-  $output = '';
 
-  foreach ($variables['rows'] as $row) {
+//$variables['table_rows'] = theme('send_mail_row', $variables);
 
-    $output .= '<tr>';
 
-    foreach ($row as $cell) {
-      $output .= '<td>';
-      $output .= $cell;
-      $output .= '</td>';
-    }
 
-    $output .= '</tr>';
 
-  }
-  $variables['rows'] = $output;
+
 
 }
 

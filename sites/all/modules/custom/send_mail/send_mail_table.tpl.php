@@ -4,15 +4,16 @@ print $caption;
 //print theme('table', array('header' => $variables['header'], 'rows' => $variables['rows'], 'caption' => $caption));
 //print theme_pager('pager');
 //render($variables);
-print  '<table' . ">\n";
-print '<tr>';
-print $variables['header'];
-print '</tr>';
+//print  '<table' . ">\n";
+//print '<tr>';
 
-print $variables['rows'];
+print '<div>';
+  print $content;
+print '</div>';
 
 
-print  "</table>\n";
+//print '</tr>';
+//print  "</table>\n";
 
 
 // .......................... SHOW PAGER

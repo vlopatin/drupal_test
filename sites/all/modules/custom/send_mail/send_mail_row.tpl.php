@@ -1,21 +1,38 @@
 <?php
 
 //var_dump($variables);
-print 'ЖРИ ГОВНО';
+
 //var_dump($variables);
-$output = '';
+//  -----------------------------------------------TABLE
+
+ $output = '';
+
+    $output .= '<div class="tabs">';
+    foreach ($variables['header'] as $cell) {
+    $output .= '<span style="background-color: #ccccee">';
+    $output .= $cell;
+    $output .= '</span>';
+  }
+    $output .= '</div>';
+
+  print $output;
+
+  $output = '';
+
+  foreach ($variables['rows'] as $row) {
+
+    $output .= '<div class="tabs">';
+
+    foreach ($row as $cell) {
+      $output .= '<span style="background-color: #bbeebb; display: inline-block;">';
+      $output .= $cell;
+      $output .= '</span>';
+    }
+
+    $output .= '</div>';
+
+  }
+print $output;
+//  ----------------------------------------------- /  TABLE
 
 
-foreach ($variables['header'] as $cell) {
-  $output .= '<td>';
-  $output .= $cell;
-  $output .= '</td>';
-}
-
-
-$variables['header'] = $output;
-
-//return $output;
-
-
-//var_dump($variables['header']);

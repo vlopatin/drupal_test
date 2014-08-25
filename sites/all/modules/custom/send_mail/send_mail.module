@@ -22,31 +22,64 @@ function send_mail_menu() {
 function send_mail_admin() {
 
   $header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # set the database table
+  $query = db_select('send_mail_table', 's')->extend('PagerDefault');
+  # get the desired fields from the database
+  $query->fields('s')
+    ->orderBy('id', 'ASC')
+    ->limit(10);
+
+  # execute the query
+  $results = $query->execute();
+
+  # build the table fields
   $rows = array();
 
-  $query = db_select('send_mail_table', 's')
-    ->fields('s')
-    //->limit('3')
-    ->execute();
-
-  while ($value = $query->fetchAssoc()) {
-    $user = user_load($value['uid']);
+  foreach ($results as $row) {
+    $user = user_load($row->uid);
     $username = $user->name;
     $rows[] = array(
-      $value['id'],
-      $value['email'],
-      $value['subject'],
+      $row->id,
+      $row->email,
+      $row->subject,
       $username,
-      format_date($value['sended_at'], 'long')
+      format_date($row->sended_at, 'long'),
     );
   }
+  $pager = theme('pager');
 
-  return theme('send_mail_table', array('header' => $header, 'rows' => $rows, 'caption' => 'Send mail log'));
+  $output = theme('send_mail_table', array('header' => $header, 'rows' => $rows, 'pages' => $pager));
+
+  return $output;
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  $rows = array();
+//
+//  $query = db_select('send_mail_table', 's')
+//    ->fields('s')
+//    //->limit('3')
+//    ->execute();
+//
+//  while ($value = $query->fetchAssoc()) {
+//    $user = user_load($value['uid']);
+//    $username = $user->name;
+//    $rows[] = array(
+//      $value['id'],
+//      $value['email'],
+//      $value['subject'],
+//      $username,
+//      format_date($value['sended_at'], 'long')
+//    );
+//  }
+//
+//  return theme('send_mail_table', array('header' => $header, 'rows' => $rows, 'caption' => 'Send mail log'));
 
 }
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
-function _theme_send_mail_table($variables) {
+function theme_send_mail_table($variables) {
   $header = $variables['header'];
   $rows = $variables['rows'];
 //  $attributes = $variables['attributes'];
@@ -180,28 +213,60 @@ function _theme_mytable_cell($cell, $header = FALSE) {
   return $output;
 }
 
-
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
 
 function send_mail_theme() {
   return array(
     'send_mail_table' => array(
+      // 'function' => 'theme_send_mail_table',
       'variables' => array(
         'header' => NULL,
         'rows' => NULL,
         'caption' => NULL,
       ),
       'template' => 'send_mail_table',
+      //'template' => 'send_mail_row'
 
-      ),
+    ),
   );
+  // 'row'
+
+
 }
+
 
 function template_preprocess_send_mail_table(&$variables, $hook) {
 
+//  $header = array(t('ID'), t('Email'), t('Subject'), t('From user'), t('Date'));
 
-  $variables['header'][0] = 'QWQ';
+//  $rows[] = array($row->id, $row->email, $row->subject, $username, format_date($row->sended_at, 'long'),
 
+  $output = '';
+
+  foreach ($variables['header'] as $cell) {
+    $output .= '<td>';
+    $output .= $cell;
+    $output .= '</td>';
+  }
+
+  $variables['header'] = $output;
+
+  $output = '';
+
+  foreach ($variables['rows'] as $row) {
+
+    $output .= '<tr>';
+
+    foreach ($row as $cell) {
+      $output .= '<td>';
+      $output .= $cell;
+      $output .= '</td>';
+    }
+
+    $output .= '</tr>';
+
+  }
+  $variables['rows'] = $output;
 
 }
 

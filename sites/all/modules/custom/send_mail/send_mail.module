@@ -279,16 +279,15 @@ function template_preprocess_send_mail_table(&$variables, $hook) {
 //  $variables['rows'] = $output;
 //  ----------------------------------------------- /  TABLE
 
+  $variables['rows_html'] = '';
+  $variables['header_html'] = '';
 
-$variables['content'] = theme('send_mail_row', $variables);
-
-
-//$variables['table_rows'] = theme('send_mail_row', $variables);
-
+  $variables['header_html'] .= theme('send_mail_row', array('table_rows' => $variables['header'], 'head' => TRUE));
 
 
-
-
+  foreach ($variables['rows'] as $row) {
+    $variables['rows_html'] .= theme('send_mail_row', array('table_rows' => $row, 'head' => FALSE));
+  }
 
 }
 

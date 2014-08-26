@@ -1,38 +1,16 @@
-<?php
+<div class="tabs">
 
-//var_dump($variables);
+<?php foreach ($table_rows as $cell) : ?>
+    <?php if ($head) : ?>
+        <span style="background-color: #bbeebb; border:solid 1px red">
+    <?php else : ?>
+        <span style="background-color: #ccccee; border:solid 1px red">
+    <?php endif; ?>
+          <?php print $cell; ?>
+        </span>
+<?php endforeach; ?>
 
-//var_dump($variables);
-//  -----------------------------------------------TABLE
+</div>
 
- $output = '';
-
-    $output .= '<div class="tabs">';
-    foreach ($variables['header'] as $cell) {
-    $output .= '<span style="background-color: #ccccee">';
-    $output .= $cell;
-    $output .= '</span>';
-  }
-    $output .= '</div>';
-
-  print $output;
-
-  $output = '';
-
-  foreach ($variables['rows'] as $row) {
-
-    $output .= '<div class="tabs">';
-
-    foreach ($row as $cell) {
-      $output .= '<span style="background-color: #bbeebb; display: inline-block;">';
-      $output .= $cell;
-      $output .= '</span>';
-    }
-
-    $output .= '</div>';
-
-  }
-print $output;
-//  ----------------------------------------------- /  TABLE
 
 

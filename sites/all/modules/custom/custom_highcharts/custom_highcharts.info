@@ -1,0 +1,4 @@
+name = custom highcharts
+description = "Module Custom highcharts"
+core = 7.x
+files[] = custom_highcharts.module

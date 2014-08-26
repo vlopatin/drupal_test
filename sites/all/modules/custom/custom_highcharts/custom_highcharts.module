@@ -1,0 +1,59 @@
+<?php
+
+function custom_highcharts_menu() {
+  $items = array();
+  $items['custom_highcharts/page'] = array(
+    'title' => 'Custom highcharts page',
+    'page callback' => 'custom_highcharts_callback',
+    //'page arguments' => array('send_mail_form'),
+    'access arguments' => array('post comments'),
+  );
+//  $items['send_mail/admin'] = array(
+//    'title' => 'Send mail admin page',
+//    'page callback' => 'send_mail_admin',
+//    'page arguments' => array(''),
+//    'access arguments' => array('access administration menu'),
+//  );
+  return $items;
+}
+
+
+/*
+ Page callback
+*/
+
+function custom_highcharts_callback() {
+  drupal_add_js(drupal_get_path('module', 'custom_highcharts') . '/highcharts.js');
+  drupal_add_js(drupal_get_path('module', 'custom_highcharts') . '/custom_highcharts.js');
+  drupal_add_js(drupal_get_path('module', 'custom_highcharts') . '/exporting.js');
+// Charting
+  $id = 'mychart';
+  $settings = array(
+    'chart' => array(
+      'renderTo' => 'chart-' . $id,
+    ),
+    'xAxis' => array(
+      'categories' => array(1, 2, 3, 4, 5, 6, 7, 8, 9),
+    ),
+    'title' => array(
+      'text' => 'Some title',
+    ),
+    'series' => array(
+      array(
+        'name' => 'Data label',
+        'data' => array(1, 3, 7, 5, 6, 8, 9, 2, 3, 6),
+      ),
+    ),
+    'credits' => array(
+      'enabled' => FALSE,
+    ),
+  );
+  drupal_add_js(array('charts' => array($id => $settings)), 'setting');
+  $content = '<div id="chart-' . $id . '"></div>';
+
+  return $content;
+}
+
+
+
+

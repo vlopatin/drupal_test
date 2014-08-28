@@ -1,0 +1,4 @@
+name = charts
+description = "charts"
+core = 7.x
+files[] = charts.module

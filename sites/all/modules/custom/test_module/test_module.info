@@ -1,0 +1,4 @@
+name = test_module
+description = "test_module"
+core = 7.x
+files[] = test_module.module

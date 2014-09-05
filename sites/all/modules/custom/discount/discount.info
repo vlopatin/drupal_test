@@ -1,0 +1,7 @@
+name = Discount
+description = "Create custom action for module rules, which gives discount to customers after purchase some products"
+dependencies[] = commerce
+dependencies[] = rules
+core = 7.x
+files[] = discount.module
+files[] = discount.inc
